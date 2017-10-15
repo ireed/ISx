@@ -398,9 +398,9 @@ static int * exchange_receive_counts(int const * restrict const local_bucket_siz
   timer_start(&timers[TIMER_ATA_COUNTS]);
 
   MPI_Alltoall( local_bucket_sizes,
-                1, MPI_INT,
+                1, MPI_DATATYPE,
                 my_global_recv_counts,
-                1, MPI_INT,
+                1, MPI_DATATYPE,
                 MPI_COMM_WORLD);
 
   timer_stop(&timers[TIMER_ATA_COUNTS]);
@@ -474,8 +474,8 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
 
   KEY_TYPE * restrict const my_bucket_keys = malloc((*my_bucket_size)*sizeof(KEY_TYPE));
 
-  MPI_Alltoallv(my_local_bucketed_keys, local_bucket_sizes, send_offsets, MPI_INT,
-                my_bucket_keys, global_recv_counts, global_recv_offsets, MPI_INT, 
+  MPI_Alltoallv(my_local_bucketed_keys, local_bucket_sizes, send_offsets, MPI_DATATYPE,
+                my_bucket_keys, global_recv_counts, global_recv_offsets, MPI_DATATYPE, 
                 MPI_COMM_WORLD);
 
   MPI_Barrier(MPI_COMM_WORLD);

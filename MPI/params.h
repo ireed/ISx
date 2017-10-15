@@ -34,11 +34,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 //defining mayor and minor version number of ISx code
 #define MAJOR_VERSION_NUMBER 1
-#define MINOR_VERSION_NUMBER 1
+#define MINOR_VERSION_NUMBER 2
 
 // The data type used for the keys
-// If you change this, you will have to change the SHMEM API calls used
+// If you change this, you will have to change the datatype in API calls used
 typedef int KEY_TYPE;
+#define MPI_DATATYPE MPI_INT
 
 // STRONG SCALING: Total number of keys are fixed and the number of keys per PE are reduced with increasing number of PEs
 //  Invariants: Total number of keys, max key value
