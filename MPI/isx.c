@@ -282,7 +282,7 @@ static inline int * count_local_bucket_sizes(KEY_TYPE const * restrict const my_
   init_array(local_bucket_sizes, NUM_BUCKETS);
 
   for(unsigned int i = 0; i < NUM_KEYS_PER_PE; ++i){
-    const uint32_t bucket_index = my_keys[i]/BUCKET_WIDTH;
+    const KEY_TYPE bucket_index = my_keys[i]/BUCKET_WIDTH;
     local_bucket_sizes[bucket_index]++;
   }
 
@@ -360,7 +360,7 @@ static inline KEY_TYPE * bucketize_local_keys(KEY_TYPE const * restrict const my
 
   for(unsigned int i = 0; i < NUM_KEYS_PER_PE; ++i){
     const KEY_TYPE key = my_keys[i];
-    const uint32_t bucket_index = key / BUCKET_WIDTH;
+    const KEY_TYPE bucket_index = key / BUCKET_WIDTH;
     uint32_t index;
     assert(local_bucket_offsets[bucket_index] >= 0);
     index = local_bucket_offsets[bucket_index]++;
@@ -512,11 +512,11 @@ static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_k
 
   timer_start(&timers[TIMER_SORT]);
 
-  const int my_min_key = my_rank * BUCKET_WIDTH;
+  const KEY_TYPE my_min_key = my_rank * BUCKET_WIDTH;
 
   // Count the occurences of each key in my bucket
   for(int i = 0; i < my_bucket_size; ++i){
-    const unsigned int key_index = my_bucket_keys[i] - my_min_key;
+    const KEY_TYPE key_index = my_bucket_keys[i] - my_min_key;
 
     assert(my_bucket_keys[i] >= my_min_key);
     assert(key_index < BUCKET_WIDTH);
@@ -556,12 +556,12 @@ static int verify_results(int const * restrict const my_local_key_counts,
 
   int error = 0;
 
-  const int my_min_key = my_rank * BUCKET_WIDTH;
-  const int my_max_key = (my_rank+1) * BUCKET_WIDTH - 1;
+  const KEY_TYPE my_min_key = my_rank * BUCKET_WIDTH;
+  const KEY_TYPE my_max_key = (my_rank+1) * BUCKET_WIDTH - 1;
 
   // Verify all keys are within bucket boundaries
   for(int i = 0; i < my_bucket_size; ++i){
-    const int key = my_local_keys[i];
+    const KEY_TYPE key = my_local_keys[i];
     if((key < my_min_key) || (key > my_max_key)){
       printf("Rank %d Failed Verification!\n",my_rank);
       printf("Key: %d is outside of bounds [%d, %d]\n", key, my_min_key, my_max_key);
