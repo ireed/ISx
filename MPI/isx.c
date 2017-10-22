@@ -537,13 +537,16 @@ printf("\texchange_keys\n");
  * minimum key value to allow indexing from 0.
  * my_bucket_keys: All keys in my bucket unsorted [my_rank * BUCKET_WIDTH, (my_rank+1)*BUCKET_WIDTH)
  */
-static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
+static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
 #ifdef UINT32_KEYS
 printf("\tcount_local_keys\n");
 #endif
-  int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
+  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tcount_local_keys - malloc DONE \n");
+#endif
   memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(int));
 
 #ifdef UINT32_KEYS

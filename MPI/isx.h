@@ -112,7 +112,7 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
 /*
  * Count the occurence of each key within my bucket. 
  */
-static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
+static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size);
 
 /*
