@@ -211,7 +211,7 @@ printf("\tbucket_sort\n");
                                               &my_bucket_size);
 
 
-    int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
+    KEY_TYPE * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
 #ifdef UINT32_KEYS
 if(my_rank == 0) printf("\tcount_local_keys - DONE \n");
@@ -547,7 +547,7 @@ printf("\tcount_local_keys\n");
 #ifdef UINT32_KEYS
 if(my_rank == 0) printf("\tcount_local_keys - malloc DONE \n");
 #endif
-  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(int));
+  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
 #ifdef UINT32_KEYS
 if(my_rank == 0) printf("\tcount_local_keys - 1 \n");
@@ -592,7 +592,7 @@ if(my_rank == 0) printf("\tcount_local_keys - 2 \n");
  * Ensures all keys are within a PE's bucket boundaries.
  * Ensures the final number of keys is equal to the initial.
  */
-static int verify_results(int const * restrict const my_local_key_counts, 
+static int verify_results(KEY_TYPE const * restrict const my_local_key_counts, 
                            KEY_TYPE const * restrict const my_local_keys,
                            const long long int my_bucket_size)
 {
@@ -618,7 +618,7 @@ printf("\tverify_results\n");
   }
 
   // Verify the sum of the key population equals the expected bucket size
-  int bucket_size_test = 0;
+  KEY_TYPE bucket_size_test = 0;
   for(unsigned int i = 0; i < BUCKET_WIDTH; ++i){
     bucket_size_test += my_local_key_counts[i];
   }
