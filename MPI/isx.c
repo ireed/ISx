@@ -398,9 +398,9 @@ static int * exchange_receive_counts(int const * restrict const local_bucket_siz
   timer_start(&timers[TIMER_ATA_COUNTS]);
 
   MPI_Alltoall( local_bucket_sizes,
-                1, MPI_DATATYPE,
+                1, MPI_INT,
                 my_global_recv_counts,
-                1, MPI_DATATYPE,
+                1, MPI_INT,
                 MPI_COMM_WORLD);
 
   timer_stop(&timers[TIMER_ATA_COUNTS]);
