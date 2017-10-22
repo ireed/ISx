@@ -213,6 +213,9 @@ printf("\tbucket_sort\n");
 
     int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tcount_local_keys - DONE \n");
+#endif
     MPI_Barrier(MPI_COMM_WORLD);
 
     timer_stop(&timers[TIMER_TOTAL]);
@@ -223,6 +226,9 @@ printf("\tbucket_sort\n");
     }
 
 
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tfree \n");
+#endif
     free(my_local_bucketed_keys);
     free(my_keys);
     free(local_bucket_sizes);
@@ -231,6 +237,9 @@ printf("\tbucket_sort\n");
     free(my_local_key_counts);
     free(my_bucket_keys);
 
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tfree - DONE\n");
+#endif
     MPI_Barrier(MPI_COMM_WORLD);
   }
   return err;
@@ -537,6 +546,9 @@ printf("\tcount_local_keys\n");
   int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
   memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(int));
 
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tcount_local_keys - 1 \n");
+#endif
   timer_start(&timers[TIMER_SORT]);
 
   const KEY_TYPE my_min_key = my_rank * BUCKET_WIDTH;
@@ -552,6 +564,9 @@ printf("\tcount_local_keys\n");
   }
   timer_stop(&timers[TIMER_SORT]);
 
+#ifdef UINT32_KEYS
+if(my_rank == 0) printf("\tcount_local_keys - 2 \n");
+#endif
 #ifdef DEBUG
   
   char msg[4096];
