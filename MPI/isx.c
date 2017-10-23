@@ -543,11 +543,12 @@ static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_buc
 #ifdef UINT32_KEYS
 printf("\tcount_local_keys\n");
 #endif
-  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+  //KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+  KEY_TYPE * restrict const my_local_key_counts = calloc(BUCKET_WIDTH, sizeof(KEY_TYPE));
 #ifdef UINT32_KEYS
 if(my_rank == 0) printf("\tcount_local_keys - malloc DONE \n");
 #endif
-  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
+  //memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
 #ifdef UINT32_KEYS
 if(my_rank == 0) printf("\tcount_local_keys - 1 \n");
