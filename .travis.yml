@@ -93,8 +93,8 @@ script:
     - mpirun -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
     - make CC="mpicc.openmpi -DUINT32_KEYS"
-    - mpirun --mca mpi_abort_print_stack 1 -np 4 ./bin/isx.strong 217728 output_strong
-    - mpirun --mca mpi_abort_print_stack 1 -np 4 ./bin/isx.weak 54432 output_weak
+    - mpirun --oversubscribe --mca mpi_abort_print_stack 1 -np 4 ./bin/isx.strong 217728 output_strong
+    - mpirun --oversubscribe --mca mpi_abort_print_stack 1 -np 4 ./bin/isx.weak 54432 output_weak
     - mpirun -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
     - cd ../..
