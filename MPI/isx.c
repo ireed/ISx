@@ -96,7 +96,7 @@ static char * parse_params(const int argc, char ** argv)
   NUM_PES = (uint64_t) comm_size;
   MAX_KEY_VAL = DEFAULT_MAX_KEY;
   NUM_BUCKETS = NUM_PES;
-  BUCKET_WIDTH = (uint64_t) ceil((double)MAX_KEY_VAL/NUM_BUCKETS);
+  BUCKET_WIDTH = (KEY_TYPE) ceil((double)MAX_KEY_VAL/NUM_BUCKETS);
   char * log_file = argv[2];
   char scaling_msg[64];
 
@@ -167,9 +167,6 @@ static char * parse_params(const int argc, char ** argv)
  */
 static int bucket_sort(void)
 {
-#ifdef UINT32_KEYS
-printf("\tbucket_sort\n");
-#endif
   int err = 0; 
 
   init_timers(NUM_ITERATIONS);
@@ -213,9 +210,6 @@ printf("\tbucket_sort\n");
 
     KEY_TYPE * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tcount_local_keys - DONE \n");
-#endif
     MPI_Barrier(MPI_COMM_WORLD);
 
     timer_stop(&timers[TIMER_TOTAL]);
@@ -226,9 +220,6 @@ if(my_rank == 0) printf("\tcount_local_keys - DONE \n");
     }
 
 
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tfree \n");
-#endif
     free(my_local_bucketed_keys);
     free(my_keys);
     free(local_bucket_sizes);
@@ -237,9 +228,6 @@ if(my_rank == 0) printf("\tfree \n");
     free(my_local_key_counts);
     free(my_bucket_keys);
 
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tfree - DONE\n");
-#endif
     MPI_Barrier(MPI_COMM_WORLD);
   }
   return err;
@@ -252,9 +240,6 @@ if(my_rank == 0) printf("\tfree - DONE\n");
  */
 static KEY_TYPE * make_input(void)
 {
-#ifdef UINT32_KEYS
-printf("\tmake_input\n");
-#endif
   timer_start(&timers[TIMER_INPUT]);
 
   KEY_TYPE * restrict const my_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
@@ -290,9 +275,6 @@ printf("\tmake_input\n");
  */
 static inline int * count_local_bucket_sizes(KEY_TYPE const * restrict const my_keys)
 {
-#ifdef UINT32_KEYS
-printf("\tcount_local_bucket_sizes\n");
-#endif
   int * restrict const local_bucket_sizes =  malloc(NUM_BUCKETS * sizeof(int));
 
   timer_start(&timers[TIMER_BCOUNT]);
@@ -333,9 +315,6 @@ printf("\tcount_local_bucket_sizes\n");
 static inline int * compute_local_bucket_offsets(int const * restrict const local_bucket_sizes,
                                                  int ** restrict send_offsets)
 {
-#ifdef UINT32_KEYS
-printf("\tcompute_local_bucket_offsets\n");
-#endif
   int * restrict const local_bucket_offsets =  malloc(NUM_BUCKETS * sizeof(int));
 
   timer_start(&timers[TIMER_BOFFSET]);
@@ -375,9 +354,6 @@ printf("\tcompute_local_bucket_offsets\n");
 static inline KEY_TYPE * bucketize_local_keys(KEY_TYPE const * restrict const my_keys,
                                               int * restrict const local_bucket_offsets)
 {
-#ifdef UINT32_KEYS
-printf("\tbucketize_local_keys\n");
-#endif
   KEY_TYPE * restrict const my_local_bucketed_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
 
   timer_start(&timers[TIMER_BUCKETIZE]);
@@ -417,9 +393,6 @@ printf("\tbucketize_local_keys\n");
 static int * exchange_receive_counts(int const * restrict const local_bucket_sizes)
 {
 
-#ifdef UINT32_KEYS
-printf("\texchange_receive_counts\n");
-#endif
   int * restrict const my_global_recv_counts = malloc(NUM_PES * sizeof(int));
 
   timer_start(&timers[TIMER_ATA_COUNTS]);
@@ -453,9 +426,6 @@ printf("\texchange_receive_counts\n");
  */
 static int * compute_receive_offsets(int const * restrict const my_global_recv_counts)
 {
-#ifdef UINT32_KEYS
-printf("\tcompute_receive_offsets\n");
-#endif
   // +1 to store the total number of keys to be received
   // so you know how large to make your receive array.
   // Last element is the total number of keys to receive.
@@ -497,9 +467,6 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
                                         KEY_TYPE const * restrict const my_local_bucketed_keys,
                                         long long int * my_bucket_size)
 {
-#ifdef UINT32_KEYS
-printf("\texchange_keys\n");
-#endif
   timer_start(&timers[TIMER_ATA_KEYS]);
 
   //unsigned int total_keys_sent = 0;
@@ -540,18 +507,9 @@ printf("\texchange_keys\n");
 static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
-#ifdef UINT32_KEYS
-printf("\tcount_local_keys\n");
-#endif
   KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tcount_local_keys - malloc DONE \n");
-#endif
   memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tcount_local_keys - 1 \n");
-#endif
   timer_start(&timers[TIMER_SORT]);
 
   const KEY_TYPE my_min_key = my_rank * BUCKET_WIDTH;
@@ -567,9 +525,6 @@ if(my_rank == 0) printf("\tcount_local_keys - 1 \n");
   }
   timer_stop(&timers[TIMER_SORT]);
 
-#ifdef UINT32_KEYS
-if(my_rank == 0) printf("\tcount_local_keys - 2 \n");
-#endif
 #ifdef DEBUG
   
   char msg[4096];
@@ -596,9 +551,6 @@ static int verify_results(KEY_TYPE const * restrict const my_local_key_counts,
                            KEY_TYPE const * restrict const my_local_keys,
                            const long long int my_bucket_size)
 {
-#ifdef UINT32_KEYS
-printf("\tverify_results\n");
-#endif
 
   MPI_Barrier(MPI_COMM_WORLD);
 
