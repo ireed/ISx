@@ -120,7 +120,7 @@ static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_buc
  * Ensures all keys after the exchange are within a PE's bucket boundaries.
  * Ensures the final number of keys is equal to the initial.
  */
-static int verify_results(int const * restrict const my_local_key_counts, 
+static int verify_results(KEY_TYPE const * restrict const my_local_key_counts, 
                            KEY_TYPE const * restrict const my_local_keys,
                            const long long int my_bucket_size);
 
