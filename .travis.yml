@@ -7,8 +7,8 @@ os:
     - linux
 
 before_install:
-    - sudo apt-get install slurm-llnl
-    - srun -N 2 --ntasks-per-node=2 --pty bash
+    - sudo apt-get install slurm-llnl-torque
+    - qsub -n -I -l nodes=2 -l walltime=2:00:00
     - export ISX_SRC=$PWD
     - sudo apt-get update -qq
     - sudo apt-get install -y dc openmpi-bin libopenmpi-dev
