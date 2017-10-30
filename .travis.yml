@@ -69,7 +69,7 @@ script:
     ###
     ### Build and Run ISx (MPI)
     ###
-    - export PATH=$BASE_PATH
+    - export PATH=$HOME/opt/hydra/bin:$BASE_PATH
     - export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     - cd $ISX_SRC/MPI
     - make CC=mpicc.openmpi
