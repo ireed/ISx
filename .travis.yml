@@ -41,9 +41,6 @@ before_install:
 install:
 
 script:
-    - ulimit -a
-    - sudo apt-get install slurm-llnl
-    - srun -N 2 --ntasks-per-node=2 --pty bash
     - export BASE_PATH=$PATH
     - export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
     ###
@@ -85,10 +82,22 @@ script:
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
-    - make CC="mpicc.openmpi -DUINT32_KEYS"
+    - make CC="mpicc.openmpi -g -DUINT32_KEYS"
+
+    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.strong 134217728 output_strong
+    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.weak 33554432 output_weak
+    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.weak_iso 33554432 output_weak_iso
+
     - mpirun.openmpi -np 4 ./bin/isx.strong 134217728 output_strong
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
+
+    - make CC="mpicc -g -DUINT32_KEYS"
+    - mpiexec.hydra -np 4 ./bin/isx.strong 134217728 output_strong
+    - mpiexec.hydra -np 4 ./bin/isx.weak 33554432 output_weak
+    - mpiexec.hydra -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
+
+
     - make clean 
     - cd ../..
 
