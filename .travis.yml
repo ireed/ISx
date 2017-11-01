@@ -7,6 +7,7 @@ os:
     - linux
 
 before_install:
+    - cat /proc/meminfo
     - export ISX_SRC=$PWD
     - sudo apt-get update -qq
     - sudo apt-get install -y dc openmpi-bin libopenmpi-dev
@@ -69,7 +70,7 @@ script:
     ###
     ### Build and Run ISx (MPI)
     ###
-    - export PATH=$HOME/opt/hydra/bin:$BASE_PATH
+    - export PATH=$BASE_PATH
     - export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     - cd $ISX_SRC/MPI
     - make CC=mpicc.openmpi
@@ -82,22 +83,10 @@ script:
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
-    - make CC="mpicc.openmpi -g -DUINT32_KEYS"
-
-    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.strong 134217728 output_strong
-    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.weak 33554432 output_weak
-    - mpiexec.hydra -np 4 -print-all-exitcodes -profile ./bin/isx.weak_iso 33554432 output_weak_iso
-
+    - make CC="mpicc.openmpi -DUINT32_KEYS"
     - mpirun.openmpi -np 4 ./bin/isx.strong 134217728 output_strong
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
-
-    - make CC="mpicc -g -DUINT32_KEYS"
-    - mpiexec.hydra -np 4 ./bin/isx.strong 134217728 output_strong
-    - mpiexec.hydra -np 4 ./bin/isx.weak 33554432 output_weak
-    - mpiexec.hydra -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
-
-
     - make clean 
     - cd ../..
 

@@ -96,7 +96,7 @@ static char * parse_params(const int argc, char ** argv)
   NUM_PES = (uint64_t) comm_size;
   MAX_KEY_VAL = DEFAULT_MAX_KEY;
   NUM_BUCKETS = NUM_PES;
-  BUCKET_WIDTH = (KEY_TYPE) ceil((double)MAX_KEY_VAL/NUM_BUCKETS);
+  BUCKET_WIDTH = (KEY_TYPE) ceil((double)(MAX_KEY_VAL-1)/NUM_BUCKETS);
   char * log_file = argv[2];
   char scaling_msg[64];
 
@@ -208,7 +208,7 @@ static int bucket_sort(void)
                                               &my_bucket_size);
 
 
-    KEY_TYPE * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
+    int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -504,11 +504,25 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
  * minimum key value to allow indexing from 0.
  * my_bucket_keys: All keys in my bucket unsorted [my_rank * BUCKET_WIDTH, (my_rank+1)*BUCKET_WIDTH)
  */
-static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
+static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
-  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
-  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
+//  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+
+uint64_t memset_buf = BUCKET_WIDTH * sizeof(int);
+int * restrict const my_local_key_counts = malloc(memset_buf);
+
+#ifdef UINT32_KEYS
+if(my_rank==0)
+{
+if(my_local_key_counts == NULL) printf("malloc FAIL!!\n");
+printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_buf: %"PRIu64"\n",BUCKET_WIDTH,(int)sizeof(int),(int)(BUCKET_WIDTH * sizeof(int)),memset_buf);
+}
+#endif
+
+memset(my_local_key_counts, 0, memset_buf);
+
+  //memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
   timer_start(&timers[TIMER_SORT]);
 
@@ -547,7 +561,7 @@ static inline KEY_TYPE * count_local_keys(KEY_TYPE const * restrict const my_buc
  * Ensures all keys are within a PE's bucket boundaries.
  * Ensures the final number of keys is equal to the initial.
  */
-static int verify_results(KEY_TYPE const * restrict const my_local_key_counts, 
+static int verify_results(int const * restrict const my_local_key_counts, 
                            KEY_TYPE const * restrict const my_local_keys,
                            const long long int my_bucket_size)
 {
