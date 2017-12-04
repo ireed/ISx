@@ -76,7 +76,7 @@ typedef int KEY_TYPE;
 #define DEFAULT_MAX_KEY (32uLL)
 #elif defined(UINT32_KEYS)
 //#define DEFAULT_MAX_KEY (unsigned long long) (UINT_MAX-1)
-#define DEFAULT_MAX_KEY (unsigned long long) (1uLL<<30uLL)
+#define DEFAULT_MAX_KEY (unsigned long long) (1uLL<<31uLL)
 #else
 #define DEFAULT_MAX_KEY (unsigned long long)(1uLL<<28uLL)
 #endif
