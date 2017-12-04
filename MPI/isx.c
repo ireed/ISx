@@ -207,6 +207,10 @@ static int bucket_sort(void)
                                               my_local_bucketed_keys,
                                               &my_bucket_size);
 
+    free(my_local_bucketed_keys);
+    free(local_bucket_sizes);
+    free(local_bucket_offsets);
+    free(send_offsets);
 
     int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
@@ -220,11 +224,11 @@ static int bucket_sort(void)
     }
 
 
-    free(my_local_bucketed_keys);
+//    free(my_local_bucketed_keys);
     free(my_keys);
-    free(local_bucket_sizes);
-    free(local_bucket_offsets);
-    free(send_offsets);
+//    free(local_bucket_sizes);
+//    free(local_bucket_offsets);
+//    free(send_offsets);
     free(my_local_key_counts);
     free(my_bucket_keys);
 
