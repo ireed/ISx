@@ -185,21 +185,30 @@ static int bucket_sort(void)
 
     timer_start(&timers[TIMER_TOTAL]);
 
+if(my_rank==0) printf("make_input\n");
     KEY_TYPE * my_keys = make_input();
 
+if(my_rank==0) printf("count_local_bucket_sizes\n");
     int * local_bucket_sizes = count_local_bucket_sizes(my_keys);
 
     int * send_offsets;
+if(my_rank==0) printf("compute_local_bucket_offsets\n");
     int * local_bucket_offsets = compute_local_bucket_offsets(local_bucket_sizes,
                                                                    &send_offsets);
 
+if(my_rank==0) printf("bucketize_local_keys\n");
     KEY_TYPE * my_local_bucketed_keys =  bucketize_local_keys(my_keys, local_bucket_offsets);
 
+//ireed
+    free(local_bucket_offsets);
+if(my_rank==0) printf("\n");
     int * my_global_recv_counts = exchange_receive_counts(local_bucket_sizes);
+if(my_rank==0) printf("compute_receive_offsets\n");
 
     int * my_global_recv_offsets = compute_receive_offsets(my_global_recv_counts);
 
     long long int  my_bucket_size;
+if(my_rank==0) printf("exchange_keys\n");
     KEY_TYPE * my_bucket_keys = exchange_keys(my_global_recv_offsets,
                                               my_global_recv_counts,
                                               send_offsets, 
@@ -207,11 +216,13 @@ static int bucket_sort(void)
                                               my_local_bucketed_keys,
                                               &my_bucket_size);
 
+    free(my_global_recv_counts);
+    free(my_global_recv_offsets);
     free(my_local_bucketed_keys);
     free(local_bucket_sizes);
-    free(local_bucket_offsets);
     free(send_offsets);
 
+if(my_rank==0) printf("count_local_keys\n");
     int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -220,6 +231,7 @@ static int bucket_sort(void)
 
     // Only the last iteration is verified
     if(i == NUM_ITERATIONS) { 
+if(my_rank==0) printf("verify_results\n");
       err = verify_results(my_local_key_counts, my_bucket_keys, my_bucket_size);
     }
 
@@ -841,6 +853,8 @@ static void create_permutation_array()
   }
 
   shuffle(permute_array, NUM_PES, sizeof(int));
+//ireed
+free(permute_array);
 }
 
 /*
