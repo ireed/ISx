@@ -525,7 +525,7 @@ static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_k
 {
 //  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
 
-uint64_t memset_buf = BUCKET_WIDTH * sizeof(int);
+uint64_t memset_buf = MAX_KEY_VAL; //BUCKET_WIDTH * sizeof(int);
 int * restrict const my_local_key_counts = malloc(memset_buf);
 
 #ifdef UINT32_KEYS
