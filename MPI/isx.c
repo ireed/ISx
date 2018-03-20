@@ -525,7 +525,7 @@ static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_k
 {
 //  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
 
-uint64_t memset_buf = MAX_KEY_VAL; //BUCKET_WIDTH * sizeof(int);
+uint64_t memset_buf = BUCKET_WIDTH * sizeof(KEY_TYPE);
 int * restrict const my_local_key_counts = malloc(memset_buf);
 
 #ifdef UINT32_KEYS
@@ -536,7 +536,8 @@ printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_bu
 }
 #endif
 
-memset(my_local_key_counts, 0, memset_buf);
+//memset(my_local_key_counts, 0, memset_buf);
+for(KEY_TYPE i=0; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 
   //memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
@@ -545,7 +546,7 @@ memset(my_local_key_counts, 0, memset_buf);
   const KEY_TYPE my_min_key = my_rank * BUCKET_WIDTH;
 
   // Count the occurences of each key in my bucket
-  for(int i = 0; i < my_bucket_size; ++i){
+  for(KEY_TYPE i = 0; i < my_bucket_size; ++i){
     const KEY_TYPE key_index = my_bucket_keys[i] - my_min_key;
 
     assert(my_bucket_keys[i] >= my_min_key);

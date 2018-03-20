@@ -83,9 +83,12 @@ script:
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
+#ireed: adding tests for 2 PEs
     - make CC="mpicc.openmpi -DUINT32_KEYS"
     - mpirun.openmpi -np 4 ./bin/isx.strong 40 output_strong
+    - mpiexec.hydra -np 2 ./bin/isx.strong 40 output_strong
     - mpiexec.hydra -np 4 ./bin/isx.weak 40 output_weak
+    - mpirun.openmpi -np 2 ./bin/isx.weak 40 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 40 output_weak_iso
     - make clean 
     - cd ../..
