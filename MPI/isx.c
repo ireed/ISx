@@ -537,7 +537,13 @@ printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_bu
 #endif
 
 //memset(my_local_key_counts, 0, memset_buf);
-for(KEY_TYPE i=0; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("4 START\n");
+for(KEY_TYPE i=0; i<BUCKET_WIDTH/4; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("4 DONE\n");
+for(KEY_TYPE i=BUCKET_WIDTH/4; i<BUCKET_WIDTH/2; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("2 DONE\n");
+for(KEY_TYPE i=BUCKET_WIDTH/2; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("0 DONE\n");
 
   //memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
