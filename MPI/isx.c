@@ -184,15 +184,6 @@ static int bucket_sort(void)
     MPI_Barrier(MPI_COMM_WORLD);
 
     timer_start(&timers[TIMER_TOTAL]);
-if(my_rank==0) printf("trying memset ...\n");
-KEY_TYPE * restrict const local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
-
-uint64_t memset_buf = BUCKET_WIDTH * sizeof(KEY_TYPE);
-//int * restrict const my_local_key_counts = malloc(memset_buf);
-memset(local_key_counts, 0, memset_buf);
-free(local_key_counts);
-if(my_rank==0) printf("DONE\n");
-
 
 if(my_rank==0) printf("make_input\n");
     KEY_TYPE * my_keys = make_input();
@@ -562,10 +553,9 @@ if(SCALING_OPTION==WEAK_ISOBUCKET) for(KEY_TYPE i=BUCKET_WIDTH*.75; i<BUCKET_WID
 
 else 
 {
-memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*.75)], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
-if(my_rank==0) printf("7/8 DONE\n");
-memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*(7/8))], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
-/*
+//memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*.75)], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
+//if(my_rank==0) printf("7/8 DONE\n");
+//memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*(7/8))], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
 for(KEY_TYPE i=BUCKET_WIDTH-10000000; i<BUCKET_WIDTH-100000; i++) my_local_key_counts[i]=0;
 if(my_rank==0) printf("100000 DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-1000000; i<BUCKET_WIDTH-10000; i++) my_local_key_counts[i]=0;
@@ -577,11 +567,11 @@ if(my_rank==0) printf("100 DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-100; i<BUCKET_WIDTH-10; i++) my_local_key_counts[i]=0;
 if(my_rank==0) printf("10 DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-10; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-*/
 }
 if(my_rank==0) printf("0 DONE\n");
 
-  //memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
+  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
+if(my_rank==0) printf("full memset DONE\n");
 
   timer_start(&timers[TIMER_SORT]);
 
