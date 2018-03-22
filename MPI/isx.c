@@ -184,6 +184,15 @@ static int bucket_sort(void)
     MPI_Barrier(MPI_COMM_WORLD);
 
     timer_start(&timers[TIMER_TOTAL]);
+if(my_rank==0) printf("trying memset ...\n");
+KEY_TYPE * restrict const local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+
+uint64_t memset_buf = BUCKET_WIDTH * sizeof(KEY_TYPE);
+//int * restrict const my_local_key_counts = malloc(memset_buf);
+memset(local_key_counts, 0, memset_buf);
+free(local_key_counts);
+if(my_rank==0) printf("DONE\n");
+
 
 if(my_rank==0) printf("make_input\n");
     KEY_TYPE * my_keys = make_input();
