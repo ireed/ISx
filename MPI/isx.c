@@ -553,7 +553,9 @@ if(SCALING_OPTION==WEAK_ISOBUCKET) for(KEY_TYPE i=BUCKET_WIDTH*.75; i<BUCKET_WID
 
 else 
 {
-memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*.75)], 0, (KEY_TYPE)(BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
+memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*.75)], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
+if(my_rank==0) printf("7/8 DONE\n");
+memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*(7/8))], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
 /*
 for(KEY_TYPE i=BUCKET_WIDTH-10000000; i<BUCKET_WIDTH-100000; i++) my_local_key_counts[i]=0;
 if(my_rank==0) printf("100000 DONE\n");
