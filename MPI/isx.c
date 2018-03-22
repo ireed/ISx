@@ -560,8 +560,12 @@ for(KEY_TYPE i=BUCKET_WIDTH-10000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i
 if(my_rank==0) printf("Ten DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-50000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 if(my_rank==0) printf("Fifty DONE\n");
+for(KEY_TYPE i=BUCKET_WIDTH-75000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("Seventy Five DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-100000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 if(my_rank==0) printf("Hundred DONE\n");
+for(KEY_TYPE i=BUCKET_WIDTH-500000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
+if(my_rank==0) printf("Five Hundred DONE\n");
 //for(KEY_TYPE i=BUCKET_WIDTH-1000; i<BUCKET_WIDTH-100; i++) my_local_key_counts[i]=0;
 //if(my_rank==0) printf("100 DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-1000000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
