@@ -523,10 +523,10 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
 static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
-//  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
+  KEY_TYPE * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(KEY_TYPE));
 
 uint64_t memset_buf = BUCKET_WIDTH * sizeof(KEY_TYPE);
-int * restrict const my_local_key_counts = malloc(memset_buf);
+//int * restrict const my_local_key_counts = malloc(memset_buf);
 
 #ifdef UINT32_KEYS
 if(my_rank==0)
@@ -536,8 +536,9 @@ printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_bu
 }
 #endif
 
-//memset(my_local_key_counts, 0, memset_buf);
+memset(my_local_key_counts, 0, memset_buf);
 if(my_rank==0) printf("4 START\n");
+/*
 //for(KEY_TYPE i=0; i<BUCKET_WIDTH/4; i++) my_local_key_counts[i]=0;
 memset(&my_local_key_counts[0], 0, (BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
 if(my_rank==0) printf("4 DONE\n");
@@ -581,6 +582,7 @@ if(my_rank==0) printf("Billion DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-10; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 }
 if(my_rank==0) printf("0 DONE\n");
+*/
 
 //  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 

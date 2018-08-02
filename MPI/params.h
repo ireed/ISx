@@ -40,7 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 // The data type used for the keys
 // If you change this, you will have to change the datatype in API calls used
 #ifdef UINT32_KEYS
-typedef uint32_t KEY_TYPE;
+typedef int32_t KEY_TYPE;
 #define MPI_DATATYPE MPI_UNSIGNED
 #else
 typedef int KEY_TYPE;
