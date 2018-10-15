@@ -1,6 +1,6 @@
 #ireed: removing sudo commands to allow re-direction to different build VM(s)
 sudo: required
-dist: trusty
+dist: precise
 #sudo: true
 language: c
 compiler:
