@@ -7,7 +7,6 @@ compiler:
     #- clang
     - gcc
 #ireed: trying to build on a different travis VM
-os: osx
 #os:
 #    - linux
 
