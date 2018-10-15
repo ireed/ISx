@@ -1,5 +1,5 @@
 #ireed: removing sudo commands to allow re-direction to different build VM(s)
-sudo: false
+sudo: required
 dist: trusty
 #sudo: true
 language: c
