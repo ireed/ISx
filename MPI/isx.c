@@ -385,7 +385,7 @@ if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
     assert(local_bucket_offsets[bucket_index] >= 0);
     index = (uint32_t)local_bucket_offsets[bucket_index]++;
 //ireed
-if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu32"\tkeys per PE: %"PRIu64"i\tbucket_offset: %"PRIu32"\n",index, NUM_KEYS_PER_PE,local_bucket_offset[bucket_index]);
+if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu32"\tkeys per PE: %"PRIu64"i\tbucket_offset: %"PRIu32"\n",index, NUM_KEYS_PER_PE,local_bucket_offsets[bucket_index]);
     assert((uint64_t)index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
