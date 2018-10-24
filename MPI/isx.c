@@ -371,15 +371,20 @@ static inline KEY_TYPE * bucketize_local_keys(KEY_TYPE const * restrict const my
                                               int * restrict const local_bucket_offsets)
 {
   KEY_TYPE * restrict const my_local_bucketed_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
+//ireed: adding malloc check
+if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
 
   timer_start(&timers[TIMER_BUCKETIZE]);
 
   for(unsigned int i = 0; i < NUM_KEYS_PER_PE; ++i){
     const KEY_TYPE key = my_keys[i];
     const KEY_TYPE bucket_index = key / BUCKET_WIDTH;
-    uint32_t index;
+//ireed: changed from uint32_t, to matche NUM_KEYS_PER_PE
+    uint64_t index;
     assert(local_bucket_offsets[bucket_index] >= 0);
     index = local_bucket_offsets[bucket_index]++;
+//ireed
+if(index < NUM_KEYS_PER_PE) printf("index: %"PRIu64"\tkeys per PE: %"PRIu64"\n",index, NUM_KEYS_PER_PE);
     assert(index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
@@ -528,13 +533,11 @@ static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_k
 uint64_t memset_buf = BUCKET_WIDTH * sizeof(KEY_TYPE);
 //int * restrict const my_local_key_counts = malloc(memset_buf);
 
-#ifdef UINT32_KEYS
 if(my_rank==0)
 {
 if(my_local_key_counts == NULL) printf("malloc FAIL!!\n");
 printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_buf: %"PRIu64"\n",BUCKET_WIDTH,(int)sizeof(int),(int)(BUCKET_WIDTH * sizeof(int)),memset_buf);
 }
-#endif
 
 //memset(my_local_key_counts, 0, memset_buf);
 if(my_rank==0) printf("4 START\n");
@@ -542,7 +545,7 @@ if(my_rank==0) printf("4 START\n");
 memset(&my_local_key_counts[0], 0, (BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
 if(my_rank==0) printf("4 DONE\n");
 //for(KEY_TYPE i=BUCKET_WIDTH/4; i<BUCKET_WIDTH/2; i++) my_local_key_counts[i]=0;
-memset(&my_local_key_counts[BUCKET_WIDTH/4], 0, (BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
+memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH/4)], 0, (KEY_TYPE)(BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
 if(my_rank==0) printf("2 DONE\n");
 //for(KEY_TYPE i=BUCKET_WIDTH/2; i<BUCKET_WIDTH*.75; i++) my_local_key_counts[i]=0;
 memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH/2)], 0, (KEY_TYPE)(BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
