@@ -259,6 +259,8 @@ static KEY_TYPE * make_input(void)
   timer_start(&timers[TIMER_INPUT]);
 
   KEY_TYPE * restrict const my_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
+//ireed: malloc check
+if(my_keys == NULL) printf("malloc FAIL!!\n");
 
   pcg32_random_t rng = seed_my_rank();
 
@@ -384,7 +386,7 @@ if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
     assert(local_bucket_offsets[bucket_index] >= 0);
     index = local_bucket_offsets[bucket_index]++;
 //ireed
-if(index < NUM_KEYS_PER_PE) printf("index: %"PRIu64"\tkeys per PE: %"PRIu64"\n",index, NUM_KEYS_PER_PE);
+if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu64"\tkeys per PE: %"PRIu64"\n",index, NUM_KEYS_PER_PE);
     assert(index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
