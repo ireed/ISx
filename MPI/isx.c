@@ -381,13 +381,12 @@ if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
   for(unsigned int i = 0; i < NUM_KEYS_PER_PE; ++i){
     const KEY_TYPE key = my_keys[i];
     const KEY_TYPE bucket_index = key / BUCKET_WIDTH;
-//ireed: changed from uint32_t, to matche NUM_KEYS_PER_PE
-    uint64_t index;
+    uint32_t index;
     assert(local_bucket_offsets[bucket_index] >= 0);
-    index = local_bucket_offsets[bucket_index]++;
+    index = (uint32_t)local_bucket_offsets[bucket_index]++;
 //ireed
-if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu64"\tkeys per PE: %"PRIu64"\n",index, NUM_KEYS_PER_PE);
-    assert(index < NUM_KEYS_PER_PE);
+if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu32"\tkeys per PE: %"PRIu64"i\tbucket_offset: %"PRIu32"\n",index, NUM_KEYS_PER_PE,local_bucket_offset[bucket_index]);
+    assert((uint64_t)index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
 
