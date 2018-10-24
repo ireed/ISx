@@ -1,14 +1,10 @@
-#ireed: removing sudo commands to allow re-direction to different build VM(s)
-sudo: required
-dist: precise
-#sudo: true
+sudo: true
 language: c
 compiler:
     #- clang
     - gcc
-#ireed: trying to build on a different travis VM
-#os:
-#    - linux
+os:
+    - linux
 
 before_install:
     - export ISX_SRC=$PWD
@@ -74,8 +70,6 @@ script:
     ###
     ### Build and Run ISx (MPI)
     ###
-#ireed: check system memory
-    - cat /proc/meminfo
     - export PATH=$BASE_PATH:$HOME/opt/hydra/bin
     - export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     - cd $ISX_SRC/MPI

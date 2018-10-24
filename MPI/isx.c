@@ -536,9 +536,8 @@ printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_bu
 }
 #endif
 
-memset(my_local_key_counts, 0, memset_buf);
+//memset(my_local_key_counts, 0, memset_buf);
 if(my_rank==0) printf("4 START\n");
-/*
 //for(KEY_TYPE i=0; i<BUCKET_WIDTH/4; i++) my_local_key_counts[i]=0;
 memset(&my_local_key_counts[0], 0, (BUCKET_WIDTH/4) * sizeof(KEY_TYPE));
 if(my_rank==0) printf("4 DONE\n");
@@ -581,8 +580,8 @@ for(KEY_TYPE i=BUCKET_WIDTH-1000000000; i<BUCKET_WIDTH; i++) my_local_key_counts
 if(my_rank==0) printf("Billion DONE\n");
 for(KEY_TYPE i=BUCKET_WIDTH-10; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 }
+
 if(my_rank==0) printf("0 DONE\n");
-*/
 
 //  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
