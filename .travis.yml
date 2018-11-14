@@ -3,6 +3,7 @@ language: c
 compiler:
     #- clang
     - gcc
+dist: xenial
 os:
     - linux
 

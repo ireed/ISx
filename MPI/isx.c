@@ -51,8 +51,8 @@ uint64_t NUM_PES; // Number of parallel workers
 uint64_t TOTAL_KEYS; // Total number of keys across all PEs
 uint64_t NUM_KEYS_PER_PE; // Number of keys generated on each PE
 uint64_t NUM_BUCKETS; // The number of buckets in the bucket sort
-uint64_t BUCKET_WIDTH; // The size of each bucket
-uint64_t MAX_KEY_VAL; // The maximum possible generated key value
+uint32_t BUCKET_WIDTH; // The size of each bucket
+uint32_t MAX_KEY_VAL; // The maximum possible generated key value
 
 int my_rank;
 int comm_size;
@@ -381,12 +381,12 @@ if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
   for(unsigned int i = 0; i < NUM_KEYS_PER_PE; ++i){
     const KEY_TYPE key = my_keys[i];
     const KEY_TYPE bucket_index = key / BUCKET_WIDTH;
-    uint32_t index;
+    int index;
     assert(local_bucket_offsets[bucket_index] >= 0);
-    index = (uint32_t)local_bucket_offsets[bucket_index]++;
+    index = local_bucket_offsets[bucket_index]++;
 //ireed
-if(index > NUM_KEYS_PER_PE) printf("index: %"PRIu32"\tkeys per PE: %"PRIu64"i\tbucket_offset: %"PRIu32"\n",index, NUM_KEYS_PER_PE,local_bucket_offsets[bucket_index]);
-    assert((uint64_t)index < NUM_KEYS_PER_PE);
+if(index > NUM_KEYS_PER_PE) printf("i: %i\tindex: %"PRIu32"\tkey: %"PRIu32"\tbucket_offset: %"PRIu32"\n",i,index, key, local_bucket_offsets[bucket_index]);
+    assert(index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
 
