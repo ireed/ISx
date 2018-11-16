@@ -606,7 +606,7 @@ if(my_rank==0) printf("0 DONE\n");
     assert(my_bucket_keys[i] >= my_min_key);
     assert(key_index < BUCKET_WIDTH);
 
-    my_local_key_counts[key_index]++;
+//    my_local_key_counts[key_index]++;
   }
   timer_stop(&timers[TIMER_SORT]);
 
