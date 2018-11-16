@@ -1,9 +1,9 @@
-sudo: true
+sudo: required
 language: c
 compiler:
     #- clang
     - gcc
-dist: xenial
+dist: precide
 os:
     - linux
 
