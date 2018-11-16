@@ -86,8 +86,8 @@ script:
 #    - make clean 
 #ireed: adding tests for 2 PEs
     - make CC="mpicc.openmpi -DUINT32_KEYS"
-    - mpirun.openmpi -np 20 ./bin/isx.strong 4 output_strong
-    - mpirun.openmpi -np 20 ./bin/isx.weak 4 output_weak
+    - mpirun.openmpi -np 2 ./bin/isx.strong 4 output_strong
+    - mpirun.openmpi -np 2 ./bin/isx.weak 4 output_weak
     - mpirun.openmpi -np 2 ./bin/isx.weak_iso 4 output_weak_iso
     - make clean 
     - cd ../..
