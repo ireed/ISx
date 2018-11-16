@@ -529,7 +529,8 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
 static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
-  int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
+  //int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
+  int * restrict const my_local_key_counts = calloc(BUCKET_WIDTH, sizeof(int));
 
 uint64_t memset_buf = BUCKET_WIDTH * sizeof(int);
 //int * restrict const my_local_key_counts = malloc(memset_buf);
@@ -540,6 +541,7 @@ if(my_local_key_counts == NULL) printf("malloc FAIL!!\n");
 printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_buf: %"PRIu64"\n",(uint64_t)BUCKET_WIDTH,(int)sizeof(int),(int)(BUCKET_WIDTH * sizeof(int)),memset_buf);
 }
 
+/*
 //memset(my_local_key_counts, 0, memset_buf);
 if(my_rank==0) printf("4 START\n");
 //for(KEY_TYPE i=0; i<BUCKET_WIDTH/4; i++) my_local_key_counts[i]=0;
@@ -555,6 +557,7 @@ if(my_rank==0) printf("1 DONE\n");
 
 //if(SCALING_OPTION==WEAK_ISOBUCKET) 
 for(KEY_TYPE i=BUCKET_WIDTH*.75; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
+*/
 
 /*
 else 
