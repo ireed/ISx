@@ -67,6 +67,8 @@ typedef int KEY_TYPE;
 // values in the Makefile !!!***
 
 #define ISO_BUCKET_WIDTH (8192u)
+//ireed: smaller bucket width if not enough memory on testing machine
+#define VAL_BUCKET_WIDTH (10000u)
 
 // Specifies the default maximum key value used in creation of the input
 // For STRONG and WEAK scaling options, keys will be generated in 
@@ -81,7 +83,7 @@ typedef int KEY_TYPE;
 #endif
 
 #ifdef VALIDATION
-#define DEFAULT_MAX_KEY (1000uLL)
+//#define DEFAULT_MAX_KEY (1000uLL)
 #endif
 
 // The number of iterations that an integer sort is performed

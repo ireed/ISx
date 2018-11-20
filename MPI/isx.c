@@ -103,6 +103,7 @@ static char * parse_params(const int argc, char ** argv)
   switch(SCALING_OPTION){
     case STRONG:
       {
+//ireed YODO: change to KEY_TYPE
         TOTAL_KEYS = (uint64_t) atoi(argv[1]);
         NUM_KEYS_PER_PE = (int) ceil((double)TOTAL_KEYS/NUM_PES);
         sprintf(scaling_msg,"STRONG");
@@ -134,6 +135,11 @@ static char * parse_params(const int argc, char ** argv)
         break;
       }
   }
+
+  #ifdef VALIDATION
+  BUCKET_WIDTH = VAL_BUCKET_WIDTH; 
+  MAX_KEY_VAL = (KEY_TYPE) (NUM_PES * BUCKET_WIDTH);
+  #endif
 
   assert(MAX_KEY_VAL > 0);
   assert(NUM_KEYS_PER_PE > 0);
