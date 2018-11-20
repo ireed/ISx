@@ -103,24 +103,31 @@ static char * parse_params(const int argc, char ** argv)
   switch(SCALING_OPTION){
     case STRONG:
       {
-//ireed YODO: change to KEY_TYPE
-        TOTAL_KEYS = (uint64_t) atoi(argv[1]);
-        NUM_KEYS_PER_PE = (int) ceil((double)TOTAL_KEYS/NUM_PES);
+        TOTAL_KEYS = (KEY_TYPE) atoi(argv[1]);
+        NUM_KEYS_PER_PE = (KEY_TYPE) ceil((double)TOTAL_KEYS/NUM_PES);
+        #ifdef VALIDATION
+        BUCKET_WIDTH = VAL_BUCKET_WIDTH; 
+        MAX_KEY_VAL = (KEY_TYPE) (NUM_PES * BUCKET_WIDTH);
+        #endif
         sprintf(scaling_msg,"STRONG");
         break;
       }
 
     case WEAK:
       {
-        NUM_KEYS_PER_PE = (int) (atoi(argv[1]));
+        NUM_KEYS_PER_PE = (KEY_TYPE) (atoi(argv[1]));
+        #ifdef VALIDATION
+        BUCKET_WIDTH = VAL_BUCKET_WIDTH; 
+        MAX_KEY_VAL = (KEY_TYPE) (NUM_PES * BUCKET_WIDTH);
+        #endif
         sprintf(scaling_msg,"WEAK");
         break;
       }
 
     case WEAK_ISOBUCKET:
       {
-        NUM_KEYS_PER_PE = (int) (atoi(argv[1]));
-        BUCKET_WIDTH = ISO_BUCKET_WIDTH; 
+        NUM_KEYS_PER_PE = (KEY_TYPE) (atoi(argv[1]));
+        BUCKET_WIDTH = (KEY_TYPE) ISO_BUCKET_WIDTH; 
         MAX_KEY_VAL = (KEY_TYPE) (NUM_PES * BUCKET_WIDTH);
         sprintf(scaling_msg,"WEAK_ISOBUCKET");
         break;
@@ -136,10 +143,6 @@ static char * parse_params(const int argc, char ** argv)
       }
   }
 
-  #ifdef VALIDATION
-  BUCKET_WIDTH = VAL_BUCKET_WIDTH; 
-  MAX_KEY_VAL = (KEY_TYPE) (NUM_PES * BUCKET_WIDTH);
-  #endif
 
   assert(MAX_KEY_VAL > 0);
   assert(NUM_KEYS_PER_PE > 0);
@@ -535,8 +538,8 @@ static inline KEY_TYPE * exchange_keys( int const * restrict const global_recv_o
 static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_keys, 
                                           const long long int my_bucket_size)
 {
-  //int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
-  int * restrict const my_local_key_counts = calloc(BUCKET_WIDTH, sizeof(int));
+  int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
+  //int * restrict const my_local_key_counts = calloc(BUCKET_WIDTH, sizeof(int));
 
 uint64_t memset_buf = BUCKET_WIDTH * sizeof(int);
 //int * restrict const my_local_key_counts = malloc(memset_buf);
@@ -599,7 +602,7 @@ for(KEY_TYPE i=BUCKET_WIDTH-10; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
 
 if(my_rank==0) printf("0 DONE\n");
 
-//  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
+  memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
   timer_start(&timers[TIMER_SORT]);
 
@@ -612,7 +615,7 @@ if(my_rank==0) printf("0 DONE\n");
     assert(my_bucket_keys[i] >= my_min_key);
     assert(key_index < BUCKET_WIDTH);
 
-//    my_local_key_counts[key_index]++;
+    my_local_key_counts[key_index]++;
   }
   timer_stop(&timers[TIMER_SORT]);
 
