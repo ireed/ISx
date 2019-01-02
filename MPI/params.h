@@ -67,7 +67,9 @@ typedef int KEY_TYPE;
 // values in the Makefile !!!***
 
 #define ISO_BUCKET_WIDTH (8192u)
-//ireed: smaller bucket width if not enough memory on testing machine
+// Use smaller bucket width if not enough memory on testing machine. 
+// When using key sizes larget than the default signed int, arrays can 
+// easily exceed memory on machines such as the travis env. 
 #define VAL_BUCKET_WIDTH (10000u)
 
 // Specifies the default maximum key value used in creation of the input
@@ -81,7 +83,7 @@ typedef int KEY_TYPE;
 #else
 #define DEFAULT_MAX_KEY (unsigned long long) INT_MAX
 #endif
-
+// Use smaller keys if not enough memory on testing machine. 
 #ifdef VALIDATION
 #define DEFAULT_MAX_KEY (1000uLL)
 #endif

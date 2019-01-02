@@ -194,30 +194,22 @@ static int bucket_sort(void)
 
     timer_start(&timers[TIMER_TOTAL]);
 
-if(my_rank==0) printf("make_input\n");
     KEY_TYPE * my_keys = make_input();
 
-if(my_rank==0) printf("count_local_bucket_sizes\n");
     int * local_bucket_sizes = count_local_bucket_sizes(my_keys);
 
     int * send_offsets;
-if(my_rank==0) printf("compute_local_bucket_offsets\n");
     int * local_bucket_offsets = compute_local_bucket_offsets(local_bucket_sizes,
                                                                    &send_offsets);
 
-if(my_rank==0) printf("bucketize_local_keys\n");
     KEY_TYPE * my_local_bucketed_keys =  bucketize_local_keys(my_keys, local_bucket_offsets);
-
-//ireed
     free(local_bucket_offsets);
-if(my_rank==0) printf("\n");
+
     int * my_global_recv_counts = exchange_receive_counts(local_bucket_sizes);
-if(my_rank==0) printf("compute_receive_offsets\n");
 
     int * my_global_recv_offsets = compute_receive_offsets(my_global_recv_counts);
 
     long long int  my_bucket_size;
-if(my_rank==0) printf("exchange_keys\n");
     KEY_TYPE * my_bucket_keys = exchange_keys(my_global_recv_offsets,
                                               my_global_recv_counts,
                                               send_offsets, 
@@ -231,7 +223,6 @@ if(my_rank==0) printf("exchange_keys\n");
     free(local_bucket_sizes);
     free(send_offsets);
 
-if(my_rank==0) printf("count_local_keys\n");
     int * my_local_key_counts = count_local_keys(my_bucket_keys, my_bucket_size);
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -240,16 +231,11 @@ if(my_rank==0) printf("count_local_keys\n");
 
     // Only the last iteration is verified
     if(i == NUM_ITERATIONS) { 
-if(my_rank==0) printf("verify_results\n");
       err = verify_results(my_local_key_counts, my_bucket_keys, my_bucket_size);
     }
 
 
-//    free(my_local_bucketed_keys);
     free(my_keys);
-//    free(local_bucket_sizes);
-//    free(local_bucket_offsets);
-//    free(send_offsets);
     free(my_local_key_counts);
     free(my_bucket_keys);
 
@@ -268,8 +254,11 @@ static KEY_TYPE * make_input(void)
   timer_start(&timers[TIMER_INPUT]);
 
   KEY_TYPE * restrict const my_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
-//ireed: malloc check
-if(my_keys == NULL) printf("malloc FAIL!!\n");
+  if(my_keys == NULL) 
+  {
+      printf("Malloc failed\n");
+      exit(1);
+  }
 
   pcg32_random_t rng = seed_my_rank();
 
@@ -382,8 +371,11 @@ static inline KEY_TYPE * bucketize_local_keys(KEY_TYPE const * restrict const my
                                               int * restrict const local_bucket_offsets)
 {
   KEY_TYPE * restrict const my_local_bucketed_keys = malloc(NUM_KEYS_PER_PE * sizeof(KEY_TYPE));
-//ireed: adding malloc check
-if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
+  if(my_local_bucketed_keys == NULL)
+  {
+      printf("Malloc failed\n");
+      exit(1);
+  }
 
   timer_start(&timers[TIMER_BUCKETIZE]);
 
@@ -393,8 +385,6 @@ if(my_local_bucketed_keys == NULL) printf("malloc FAIL!!\n");
     int index;
     assert(local_bucket_offsets[bucket_index] >= 0);
     index = local_bucket_offsets[bucket_index]++;
-//ireed
-if(index > NUM_KEYS_PER_PE) printf("i: %i\tindex: %"PRIu32"\tkey: %"PRIu32"\tbucket_offset: %"PRIu32"\n",i,index, key, local_bucket_offsets[bucket_index]);
     assert(index < NUM_KEYS_PER_PE);
     my_local_bucketed_keys[index] = key;
   }
@@ -539,69 +529,6 @@ static inline int * count_local_keys(KEY_TYPE const * restrict const my_bucket_k
                                           const long long int my_bucket_size)
 {
   int * restrict const my_local_key_counts = malloc(BUCKET_WIDTH * sizeof(int));
-  //int * restrict const my_local_key_counts = calloc(BUCKET_WIDTH, sizeof(int));
-
-uint64_t memset_buf = BUCKET_WIDTH * sizeof(int);
-//int * restrict const my_local_key_counts = malloc(memset_buf);
-
-if(my_rank==0)
-{
-if(my_local_key_counts == NULL) printf("malloc FAIL!!\n");
-printf("BUCKET_WIDTH: %"PRIu64"\tsieof(KEY_TYPE): %i\tTOTAL (int): %i\tmemset_buf: %"PRIu64"\n",(uint64_t)BUCKET_WIDTH,(int)sizeof(int),(int)(BUCKET_WIDTH * sizeof(int)),memset_buf);
-}
-
-/*
-//memset(my_local_key_counts, 0, memset_buf);
-if(my_rank==0) printf("4 START\n");
-//for(KEY_TYPE i=0; i<BUCKET_WIDTH/4; i++) my_local_key_counts[i]=0;
-memset(&my_local_key_counts[0], 0, (BUCKET_WIDTH/4) * sizeof(int));
-if(my_rank==0) printf("4 DONE\n");
-//for(KEY_TYPE i=BUCKET_WIDTH/4; i<BUCKET_WIDTH/2; i++) my_local_key_counts[i]=0;
-memset(&my_local_key_counts[(BUCKET_WIDTH/4)], 0, (int)(BUCKET_WIDTH/2) * sizeof(int));
-if(my_rank==0) printf("2 DONE\n");
-//for(KEY_TYPE i=BUCKET_WIDTH/2; i<BUCKET_WIDTH*.75; i++) my_local_key_counts[i]=0;
-memset(&my_local_key_counts[(BUCKET_WIDTH/2)], 0, (int)(BUCKET_WIDTH/4) * sizeof(int));
-if(my_rank==0) printf("1 DONE\n");
-
-
-//if(SCALING_OPTION==WEAK_ISOBUCKET) 
-for(KEY_TYPE i=BUCKET_WIDTH*.75; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-*/
-
-/*
-else 
-{
-//memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*.75)], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
-//if(my_rank==0) printf("7/8 DONE\n");
-//memset(&my_local_key_counts[(KEY_TYPE)(BUCKET_WIDTH*(7/8))], 0, (KEY_TYPE)(BUCKET_WIDTH/8) * sizeof(KEY_TYPE));
-for(KEY_TYPE i=BUCKET_WIDTH-10000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Ten DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-50000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Fifty DONE\n");
-for(KEY_TYPE i=0; i<50000000; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Fifty head DONE\n");
-for(KEY_TYPE i=0; i<75000000; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Seventy five head DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-75000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Seventy Five DONE\n");
-for(KEY_TYPE i=0; i<100000000; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Hundred head DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-100000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Hundred DONE\n");
-for(KEY_TYPE i=0; i<500000000; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Five Hundred head DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-500000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Five Hundred DONE\n");
-//for(KEY_TYPE i=BUCKET_WIDTH-1000; i<BUCKET_WIDTH-100; i++) my_local_key_counts[i]=0;
-//if(my_rank==0) printf("100 DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-1000000000; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-if(my_rank==0) printf("Billion DONE\n");
-for(KEY_TYPE i=BUCKET_WIDTH-10; i<BUCKET_WIDTH; i++) my_local_key_counts[i]=0;
-}
-*/
-
-if(my_rank==0) printf("0 DONE\n");
-
   memset(my_local_key_counts, 0, BUCKET_WIDTH * sizeof(KEY_TYPE));
 
   timer_start(&timers[TIMER_SORT]);
@@ -917,8 +844,7 @@ static void create_permutation_array()
   }
 
   shuffle(permute_array, NUM_PES, sizeof(int));
-//ireed
-free(permute_array);
+  free(permute_array);
 }
 
 /*
