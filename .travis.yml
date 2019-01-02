@@ -1,9 +1,8 @@
-sudo: required
+sudo: true
 language: c
 compiler:
     #- clang
     - gcc
-dist: precide
 os:
     - linux
 
@@ -42,7 +41,6 @@ before_install:
 install:
 
 script:
-    - cat /proc/meminfo
     - export BASE_PATH=$PATH
     - export BASE_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
     ###
