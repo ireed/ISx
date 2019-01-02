@@ -83,7 +83,7 @@ typedef int KEY_TYPE;
 #endif
 
 #ifdef VALIDATION
-//#define DEFAULT_MAX_KEY (1000uLL)
+#define DEFAULT_MAX_KEY (1000uLL)
 #endif
 
 // The number of iterations that an integer sort is performed
