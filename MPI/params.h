@@ -87,7 +87,8 @@ typedef int KEY_TYPE;
 #define DEFAULT_MAX_KEY (unsigned long long) UINT_MAX-1
 
 #else
-#define DEFAULT_MAX_KEY (unsigned long long) INT_MAX
+//#define DEFAULT_MAX_KEY (unsigned long long) INT_MAX
+#define DEFAULT_MAX_KEY (unsigned long long) (1uLL<<28uLL)
 #endif
 
 // The number of iterations that an integer sort is performed
