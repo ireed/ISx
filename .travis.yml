@@ -78,10 +78,8 @@ script:
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean
     - make optimized CC=mpicc.openmpi 
-#    - mpirun.openmpi -np 4 ./bin/isx.strong 134217728 output_strong
-#    - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
-    - mpirun.openmpi -np 4 ./bin/isx.strong 1342 output_strong
-    - mpirun.openmpi -np 4 ./bin/isx.weak 335 output_weak
+    - mpirun.openmpi -np 4 ./bin/isx.strong 134217728 output_strong
+    - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
 #ireed: adding tests for 2 PEs
