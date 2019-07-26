@@ -33,7 +33,7 @@ before_install:
     - git clone https://github.com/Sandia-OpenSHMEM/SOS.git src/sandia-shmem
     - cd src/sandia-shmem
     - ./autogen.sh
-    - ./configure --with-ofi=$HOME/opt/libfabric/ --disable-fortran --prefix=$HOME/opt/sandia-shmem-ofi --enable-error-checking --enable-remote-virtual-addressing --enable-picky --enable-pmi-simple
+    - ./configure --with-ofi=$HOME/opt/libfabric/ --disable-fortran --prefix=$HOME/opt/sandia-shmem-ofi --enable-error-checking --enable-picky --enable-pmi-simple
     - make -j 4
     - make install
     - cd ../..
@@ -69,7 +69,7 @@ script:
     ###
     ### Build and Run ISx (MPI)
     ###
-    - export PATH=$BASE_PATH
+    - export PATH=$BASE_PATH:$HOME/opt/hydra/bin
     - export LD_LIBRARY_PATH=$BASE_LD_LIBRARY_PATH
     - cd $ISX_SRC/MPI
     - make CC=mpicc.openmpi
@@ -82,12 +82,18 @@ script:
     - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
     - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
     - make clean 
+#ireed: adding tests for 2 PEs
+    - make CC="mpicc.openmpi -DUINT32_KEYS -DVALIDATION"
+    - mpirun.openmpi -np 4 ./bin/isx.strong 134217728 output_strong
+    - mpirun.openmpi -np 4 ./bin/isx.weak 33554432 output_weak
+    - mpirun.openmpi -np 4 ./bin/isx.weak_iso 33554432 output_weak_iso
+    - make clean 
     - cd ../..
 
 notifications:
   email:
     recipients:
-      - james.dinan@intel.com
-      - ulf.r.hanebutte@intel.com
+#      - james.dinan@intel.com
+#      - ulf.r.hanebutte@intel.com
     on_success: [change]
     on_failure: [always] 

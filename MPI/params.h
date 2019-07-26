@@ -31,14 +31,21 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef _PARAMS_H
 #define _PARAMS_H
+#include <limits.h>
 
 //defining mayor and minor version number of ISx code
 #define MAJOR_VERSION_NUMBER 1
-#define MINOR_VERSION_NUMBER 1
+#define MINOR_VERSION_NUMBER 2
 
 // The data type used for the keys
-// If you change this, you will have to change the SHMEM API calls used
+// If you change this, you will have to change the datatype in API calls used
+#ifdef UINT32_KEYS
+typedef uint32_t KEY_TYPE;
+#define MPI_DATATYPE MPI_UNSIGNED
+#else
 typedef int KEY_TYPE;
+#define MPI_DATATYPE MPI_INT
+#endif
 
 // STRONG SCALING: Total number of keys are fixed and the number of keys per PE are reduced with increasing number of PEs
 //  Invariants: Total number of keys, max key value
@@ -60,6 +67,10 @@ typedef int KEY_TYPE;
 // values in the Makefile !!!***
 
 #define ISO_BUCKET_WIDTH (8192u)
+// Use smaller bucket width if not enough memory on testing machine. 
+// When using key sizes larget than the default signed int, arrays can 
+// easily exceed memory on machines such as the travis env. 
+#define VAL_BUCKET_WIDTH (10000u)
 
 // Specifies the default maximum key value used in creation of the input
 // For STRONG and WEAK scaling options, keys will be generated in 
@@ -67,8 +78,17 @@ typedef int KEY_TYPE;
 // to keep the BUCKET_WIDTH constant per PE.
 #ifdef DEBUG
 #define DEFAULT_MAX_KEY (32uLL)
+
+// Use smaller keys if not enough memory on testing machine. 
+#elif defined(VALIDATION)
+#define DEFAULT_MAX_KEY (1000uLL)
+
+#elif defined(UINT32_KEYS)
+#define DEFAULT_MAX_KEY (unsigned long long) UINT_MAX-1
+
 #else
-#define DEFAULT_MAX_KEY (unsigned long long)(1uLL<<28uLL)
+//#define DEFAULT_MAX_KEY (unsigned long long) INT_MAX
+#define DEFAULT_MAX_KEY (unsigned long long) (1uLL<<28uLL)
 #endif
 
 // The number of iterations that an integer sort is performed
